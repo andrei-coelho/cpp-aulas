@@ -61,7 +61,7 @@ std::bitset<8> hex_to_bin(std::string strhex){
     return b;
 }
 
-std::string vegenere_cipher_decrypt(std::string strhex, std::string key){
+std::string vigenere_cipher_decrypt(std::string strhex, std::string key){
     
     std::string keyhex = to_hex(key);
     int maxLen = keyhex.length() -1;
@@ -98,7 +98,7 @@ std::string vegenere_cipher_decrypt(std::string strhex, std::string key){
 
 }
 
-std::string vegenere_cipher_encrypt(std::string str, std::string key){
+std::string vigenere_cipher_encrypt(std::string str, std::string key){
     
     std::string strhex = to_hex(str);
     std::string keyhex = to_hex(key);
@@ -137,9 +137,9 @@ std::string vegenere_cipher_encrypt(std::string str, std::string key){
 
 int main()
 {   
-    std::string encrypt = vegenere_cipher_encrypt("Hello!", "key");
+    std::string encrypt = vigenere_cipher_encrypt("Hello!", "key");
     cout << encrypt << "\n";
-    std::string decrypt = vegenere_cipher_decrypt(encrypt, "key");
+    std::string decrypt = vigenere_cipher_decrypt(encrypt, "key");
     cout << decrypt << "\n";
     return 0;
 }
