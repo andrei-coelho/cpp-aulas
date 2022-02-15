@@ -14,6 +14,7 @@ bitset <N1 + N2> concat( const bitset <N1> & b1, const bitset <N2> & b2 ) {
     return bitset <N1 + N2>( s1 + s2 );
 }
 
+
 std::bitset<4> to_bin(char c){
     stringstream ss;
     ss << hex << c;
@@ -23,12 +24,14 @@ std::bitset<4> to_bin(char c){
     return b;
 }
 
+
 std::string to_hex(std::string str){
     std::stringstream ss;
     for(int i=0; i<str.length(); ++i)
         ss << std::hex << (int)str[i];
     return ss.str();
 }
+
 
 std::string hex2ascii(std::string strhex){
     
@@ -44,6 +47,7 @@ std::string hex2ascii(std::string strhex){
     return str;
 }
 
+
 std::string bin_to_hex(std::bitset<8> charbyte){
     stringstream res;
     res << hex << uppercase << charbyte.to_ulong();
@@ -51,6 +55,7 @@ std::string bin_to_hex(std::bitset<8> charbyte){
     if(r.length() == 1) r = "0"+r;
     return r;
 }
+
 
 std::bitset<8> hex_to_bin(std::string strhex){
     stringstream ss;
@@ -60,6 +65,7 @@ std::bitset<8> hex_to_bin(std::string strhex){
     bitset<8> b(n);
     return b;
 }
+
 
 std::string vigenere_cipher_decrypt(std::string strhex, std::string key){
     
@@ -98,6 +104,7 @@ std::string vigenere_cipher_decrypt(std::string strhex, std::string key){
 
 }
 
+
 std::string vigenere_cipher_encrypt(std::string str, std::string key){
     
     std::string strhex = to_hex(str);
@@ -133,13 +140,5 @@ std::string vigenere_cipher_encrypt(std::string str, std::string key){
     }
 
     return hexstr;
-}
-
-int main()
-{   
-    std::string encrypt = vigenere_cipher_encrypt("Hello!", "key");
-    cout << encrypt << "\n";
-    std::string decrypt = vigenere_cipher_decrypt(encrypt, "key");
-    cout << decrypt << "\n";
-    return 0;
+    
 }
