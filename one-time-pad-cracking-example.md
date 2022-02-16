@@ -37,14 +37,14 @@ Nos dando 3 opções de CHAVE que alocam os valores da chave que estão escondid
 Usando CADA CHAVE GERADA em cada valor hexadecimal dos textos cifrados temos:
 
     0xA8 -> [
-        CHAVE A -> 0011 0101 -> "#" (X)
+        CHAVE A -> 0011 0101 -> "#" (X) <-- texto incorreto
         CHAVE B -> 0111 0100 -> "t"
         CHAVE C -> 0110 0101 -> "e"
     ]
 
     0xED -> [
         CHAVE A -> 0111 0000 -> "p"
-        CHAVE B -> 0010 0001 -> "!" (X)
+        CHAVE B -> 0010 0001 -> "!" (X) <-- texto incorreto
         CHAVE C -> 0010 0000 -> space
     ]
 
@@ -56,7 +56,7 @@ Usando CADA CHAVE GERADA em cada valor hexadecimal dos textos cifrados temos:
 
 Logo a CHAVE A e a CHAVE B não podem estar corretas pois ambas geram caracteres diferentes de "textos simples" conforme o enunciado:
 
-> "[...]resultantes da criptografia de textos simples ASCII <b>contendo apenas letras e espaços</b> em inglês[...]"
+> "[...] resultantes da criptografia de textos simples ASCII <b>contendo apenas letras e espaços</b> em inglês [...]"
 
 Por tanto a única chave possível é a CHAVE C. Logo, o resultado da questão é:
 
