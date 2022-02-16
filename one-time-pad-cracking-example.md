@@ -15,24 +15,24 @@ Analisando os valores hexadecimais dos textos cifrados + as possibilidades de re
 
 Pois:
 
-    0xA8 - 1010 1000
-    0xED - 1110 1101
-    0xBD - 1011 1101
-
+    0xBD  - 1011 1101
+    
+        X O R
+    
     space - 0010 0000
     "a"   - 0110 0001
     "p"   - 0111 0000
 
-Nos dando 3 opções de CHAVE que alocam os valores da chave que estão escondidos:
+Nos dando 3 opções de CHAVE que alocam os valores da chave que estão escondidos para encontrar o valor em 0xBD:
 
     A) - space (caracter de espaço)
-    0010 0000 -> CHAVE A: 1001 1101
+    0010 0000 -> XOR 0xBD -> CHAVE A: 1001 1101
 
     B) - a
-    0110 0001 -> CHAVE B: 1101 1100
+    0110 0001 -> XOR 0xBD -> CHAVE B: 1101 1100
 
     C) - p
-    0111 0000 -> CHAVE C: 1100 1100
+    0111 0000 -> XOR 0xBD -> CHAVE C: 1100 1100
 
 Usando CADA CHAVE GERADA em cada valor hexadecimal dos textos cifrados temos:
 
