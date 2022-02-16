@@ -65,3 +65,12 @@ Por tanto a única chave possível é a CHAVE C. Logo, o resultado da questão �
 Pois:
 
     0xBD -> (usando CHAVE C) -> 0111 0000 -> 70 -> "p"
+
+
+---------------------
+
+<h1>Conclusão</h1>
+
+O exemplo acima mostra a fragilidade de ONE-TIME PAD quando as mensagens criptográficas são geradas pela mesma chave porque podemos comparar caracteres das mesmas posições de mensagens anteriores eliminando chaves que não funcionaram.
+
+Claro que o exemplo anterior tem um facilitador pois ele deixa como opção alguns caracteres a serem testados. Porém isso é indiferente sob o ponto de vista técnico, porque é bem simples criar um algorítimo para gerar multiplas chaves para todos os caracteres e testá-los automaticamente, eliminado os que não passam pelos testes.
