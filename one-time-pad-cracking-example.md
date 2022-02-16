@@ -15,9 +15,9 @@ Analisando os valores hexadecimais dos textos cifrados + as possibilidades de re
 
 Pois:
 
-    A8 - 1010 1000
-    ED - 1110 1101
-    BD - 1011 1101
+    0xA8 - 1010 1000
+    0xED - 1110 1101
+    0xBD - 1011 1101
 
     space - 0010 0000
     "a"   - 0110 0001
@@ -36,19 +36,19 @@ Nos dando 3 opções de CHAVE que alocam os valores da chave que estão escondid
 
 Usando CADA CHAVE GERADA em cada valor hexadecimal dos textos cifrados temos:
 
-    A8 -> [
+    0xA8 -> [
         CHAVE A -> 0011 0101 -> "#" (X)
         CHAVE B -> 0111 0100 -> "t"
         CHAVE C -> 0110 0101 -> "e"
     ]
 
-    ED -> [
+    0xED -> [
         CHAVE A -> 0111 0000 -> "p"
         CHAVE B -> 0010 0001 -> "!" (X)
         CHAVE C -> 0010 0000 -> space
     ]
 
-    BD -> [
+    0xBD -> [
         CHAVE A -> 0010 0000 -> space
         CHAVE B -> 0110 0001 -> "a"
         CHAVE C -> 0111 0000 -> "p"
@@ -64,4 +64,4 @@ Por tanto a única chave possível é a CHAVE C. Logo, o resultado da questão �
 
 Pois:
 
-    BD -> CHAVE C -> 0111 0000 -> 70 -> "p"
+    0xBD -> (usando CHAVE C) -> 0111 0000 -> 70 -> "p"
