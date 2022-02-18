@@ -1,3 +1,9 @@
+/* 
+    TODO:
+    criar uma lista de resultados
+
+*/
+
 #include <iostream>
 #include <string>
 #include <vector>
