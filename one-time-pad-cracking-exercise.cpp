@@ -11,13 +11,22 @@ Contanto que você possa descriptografar todos eles, não importa como você fa�
 
     Textos Cifrados:
 
-    BB3A65F6F0034FA957F6A767699CE7FABA855AFB4F2B520AEAD612944A801E
-    BA7F24F2A35357A05CB8A16762C5A6AAAC924AE6447F0608A3D11388569A1E
-    A67261BBB30651BA5CF6BA297ED0E7B4E9894AA95E300247F0C0028F409A1E
-    A57261F5F0004BA74CF4AA2979D9A6B7AC854DA95E305203EC8515954C9D0F
-    BB3A70F3B91D48E84DF0AB702ECFEEB5BC8C5DA94C301E0BECD241954C831E
-    A6726DE8F01A50E849EDBC6C7C9CF2B2A88E19FD423E0647ECCB04DD4C9D1E
-    BC7570BBBF1D46E85AF9AA6C7A9CEFA9E9825CFD5E3A0047F7CD009305A71E
+    58301B135C580B5D491D425C4212175058713C
+    4B2F1B405F0A1F434D1D425C4212175058713C
+    5E341743564F190E5950501549101A464E713C
+    4C7D095A575A064B5F1D44584E421D474A2238
+    58301B135B0A1947414D5D505C421D474A2238
+    4B2F1B405F0A0B0E5F545C45430708155E3C3C
+    4C7D1C415B590F0E595050155C0B164547342E
+
+
+TODO:
+
+    Na criação das possiveis chaves, analisar
+    se há o texto de filtro contido no valor.
+
+    A melhor forma de fazer isso é fazer essa 
+    análise em bits.
 
 */
 
@@ -33,9 +42,11 @@ Contanto que você possa descriptografar todos eles, não importa como você fa�
 
 
 char const chars[] = {
-    'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
-    'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
+    'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'
 };
+
+std::vector < std::string > filter_words;
+int size_filter_words;
 
 std::vector < std::bitset<8> > bin_chars;
 std::vector < std::vector < std::string > > parts_keys_approved;
@@ -43,6 +54,7 @@ std::vector < std::string > possibles_keys;
 
 std::vector < std::string > encrypt_texts;
 std::vector < std::string > results;
+
 
 
 std::string gen_res(std::string strhex){
@@ -58,15 +70,17 @@ std::string gen_res(std::string strhex){
     return str;
 }
 
+
 bool analise_num(int num){
     bool statusNum = true;
-    if(num < 65 || num > 123){
+    if(num < 97 || num > 122){
         if(num != 32){
             statusNum = false;
         }
     }
     return statusNum;
 }
+
 
 std::bitset<8> char_to_bin(char c){
     return std::bitset<8>(int(c));
@@ -109,42 +123,62 @@ std::vector<std::bitset<8> > get_keys(std::string charhex){
     
 }
 
+
 void test_keys(std::string str_pattern , std::vector<std::string> list){
 
-
-    for (size_t y = 0; y < encrypt_texts.size(); y++)
+    std::string encpattern = encrypt_texts[0];
+    
+    for (size_t i = 0; i < list.size(); i++) 
     {
-        for (size_t i = 0; i < list.size(); i++) 
+
+        std::string st = str_pattern + list[i];
+        bool statusRes = true;
+
+        for (size_t x = 0; x < st.length(); x+=2)
         {
             
-            std::string st = str_pattern + list[i];
-            bool statusRes = true;
+            std::bitset<8> byte = hexstr_to_bin(encpattern.substr(x, 2)) ^ hexstr_to_bin(st.substr(x,2));
+            int num = byte.to_ulong();
+            
+            if(!analise_num(num)){
+                statusRes = false;
+                break;
+            }
 
-            for (size_t x = 0; x < st.length(); x+=2)
+        }
+
+        if(size_filter_words > 0){
+            for (size_t i = 0; i < size_filter_words; i++)
             {
-                std::bitset<8> byte = hexstr_to_bin(encrypt_texts[y].substr(x, 2)) ^ hexstr_to_bin(st.substr(x,2));
-                int num = byte.to_ulong();
-                if(!analise_num(num)){
+                if (filter_words[i].find(encpattern) == std::string::npos) {
                     statusRes = false;
                     break;
                 }
             }
             
-            if(statusRes) {
-                std::string res = vigenere_cipher_decrypt(encrypt_texts[y], st);
-                std::cout << "Resultado encontrado: " << res << "\n";
-                results.push_back(res);
-            }
-            
-
         }
+        
+        if(statusRes) {
+            
+            std::string key = hex2ascii(st);
+            std::string res = vigenere_cipher_decrypt(encpattern, key);
+            
+            std::cout << "Resultado encontrado: " << res << "\n";
+            std::cout << "Chave Usada: " << key << "\n";
+            
+            results.push_back(res);
+        
+        }
+        
     }
 
 }
 
+
 void add_keys(int pos_char = 0, std::string strAtual = ""){
     
     int max_pos = parts_keys_approved.size() -1;
+    
     if(pos_char == max_pos) {
         test_keys(strAtual, parts_keys_approved[pos_char]);
         return;
@@ -216,7 +250,6 @@ void decrypt_texts(){
 
 int main() {
     
-    
     time_t now = time(0);
     char* dt = ctime(&now);
     cout << "Iniciado em: " << dt << "\n";
@@ -227,23 +260,26 @@ int main() {
     bin_chars.push_back(hex_to_bin(0x20)); // add space char
     
     // inserindo textos para análise ...
-    encrypt_texts.push_back("BA7F24F2A35357A05CB8A16762C5A6AAAC924AE6447F0608A3D11388569A1E");
-    encrypt_texts.push_back("A67261BBB30651BA5CF6BA297ED0E7B4E9894AA95E300247F0C0028F409A1E");
-    encrypt_texts.push_back("A57261F5F0004BA74CF4AA2979D9A6B7AC854DA95E305203EC8515954C9D0F");
-    encrypt_texts.push_back("BB3A70F3B91D48E84DF0AB702ECFEEB5BC8C5DA94C301E0BECD241954C831E");
-    encrypt_texts.push_back("A6726DE8F01A50E849EDBC6C7C9CF2B2A88E19FD423E0647ECCB04DD4C9D1E");
-    encrypt_texts.push_back("BC7570BBBF1D46E85AF9AA6C7A9CEFA9E9825CFD5E3A0047F7CD009305A71E");
-    encrypt_texts.push_back("BB3A65F6F0034FA957F6A767699CE7FABA855AFB4F2B520AEAD612944A801E");
+    encrypt_texts.push_back("58301B135C580B5D491D425C4212175058713C");
+    encrypt_texts.push_back("4B2F1B405F0A1F434D1D425C4212175058713C");
+    encrypt_texts.push_back("5E341743564F190E5950501549101A464E713C");
+    encrypt_texts.push_back("4C7D095A575A064B5F1D44584E421D474A2238");
+    encrypt_texts.push_back("58301B135B0A1947414D5D505C421D474A2238");
+    encrypt_texts.push_back("4B2F1B405F0A0B0E5F545C45430708155E3C3C");
+    encrypt_texts.push_back("4C7D1C415B590F0E595050155C0B164547342E");
+
+    // filter_words.push_back("uma");
+
+    size_filter_words = filter_words.size();
 
     // decriptando os textos...
     decrypt_texts();
 
-    std::cout << "Total encontrado: " << results.size() << "\n";
-    std::cout << "Programa finalizado" << "\n";
-
     time_t now2 = time(0);
     char* dt2 = ctime(&now2);
-    cout << "Finalizado em: " << dt2 << "\n";
 
+    std::cout << "Total Decriptado: " << results.size() << "\n";
+    std::cout << "Programa finalizado em: " << dt2 << "\n\n";
+    
     return 0;
 }
