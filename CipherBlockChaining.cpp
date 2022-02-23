@@ -140,7 +140,7 @@ std::string hex2ascii(std::string strhex){
     return str;
 }
 
-std::string CBC_encrypt(std::string message, std::string key){
+std::string CBC_encrypt(std::string message, std::string key1, std::string key2){
     
     unsigned int sizeMsg = messages.size();
 
@@ -151,22 +151,33 @@ std::string CBC_encrypt(std::string message, std::string key){
         sizeMsg++;
     }
 
-    std::vector<std::bitset<8> > lastMessage = messages[sizeMsg-1];
-    std::vector<std::bitset<8> > encMessPart = xroring_message(lastMessage, string_to_bytes(message));
-    std::vector<std::bitset<8> > encMesFinal = xroring_message(encMessPart, string_to_bytes(key));
-    messages.push_back(encMesFinal);
+    std::vector<std::bitset<8> > lastMessage  = messages[sizeMsg-1];
+    std::vector<std::bitset<8> > encMessPart1 = xroring_message(lastMessage, string_to_bytes(message));
+    std::vector<std::bitset<8> > encMessageC  = xroring_message(encMessPart1, string_to_bytes(key1));
+    std::vector<std::bitset<8> > encMessCheck = xroring_message(encMessageC, string_to_bytes(key2));
 
-    return bytes_to_hex(encMesFinal);
+    std::string encMessage = bytes_to_hex(encMessageC) + bytes_to_hex(encMessCheck);
+
+    messages.push_back(encMessageC);
+
+    return encMessage;
 
 }
 
 
-std::string CBC_decrypt(std::string hex, std::string key){
+std::string CBC_decrypt(std::string hex, std::string key1, std::string key2){
 
     std::vector<std::bitset<8> > lastMessage = messages[messages.size()-2];
-    std::vector<std::bitset<8> > messagBytes = hex_to_bytes(hex);
-    std::vector<std::bitset<8> > decMessPart = xroring_message(messagBytes, string_to_bytes(key));
+    std::vector<std::bitset<8> > messagBytes = hex_to_bytes(hex.substr(0,16));
+    std::vector<std::bitset<8> > checkBytes  = xroring_message(hex_to_bytes(hex.substr(16,16)), string_to_bytes(key2));
+    std::vector<std::bitset<8> > decMessPart = xroring_message(messagBytes, string_to_bytes(key1));
     std::vector<std::bitset<8> > decMesFinal = xroring_message(decMessPart, lastMessage);
+
+    if(bytes_to_hex(messagBytes) == bytes_to_hex(checkBytes)) {
+        std::cout << "VALID: TRUE" << "\n";
+    } else {
+        std::cout << "VALID: FALSE" << "\n";
+    }
 
     return hex2ascii(bytes_to_hex(decMesFinal));
 }
@@ -174,27 +185,41 @@ std::string CBC_decrypt(std::string hex, std::string key){
 
 int main(){ 
     
-    std::string key = "chave000";
-    std::string m1  = "teste 01";
-    std::string m2  = "teste 02";
+    std::string key1 = "chave000";
+    std::string key2 = "000chave";
+    std::string m1   = "send $01";
+    std::string m2   = "send $02";
+    std::string m3   = "send $03";
 
-    std::cout << "----------------------" << "\n";
+    std::cout << "---------------------------------------" << "\n";
 
-    std::cout << "KEY:  " <<  key << "\n";
+    std::cout << "KEY1: " <<  key1 << "\n";
+    std::cout << "KEY2: " <<  key2 << "\n";
+
+    std::cout << "--------------------------------------" << "\n";
+
     std::cout << "MSG1: " << m1 << "\n\n";
-    std::string m1c = CBC_encrypt(m1, key);
+    std::string m1c = CBC_encrypt(m1, key1, key2);
     std::cout << "ENC1: " << m1c << "\n";
-    std::string m1d = CBC_decrypt(m1c, key);
+    std::string m1d = CBC_decrypt(m1c, key1, key2);
     std::cout << "DEC1: " << m1d << "\n";
-    std::cout << "----------------------" << "\n";
+    std::cout << "--------------------------------------" << "\n";
 
-    std::cout << "KEY:  " <<  key << "\n";
     std::cout << "MSG2: " << m2 << "\n\n";
-    std::string m2c = CBC_encrypt(m2, key);
+    std::string m2c = CBC_encrypt(m2, key1, key2);
     std::cout << "ENC2: " << m2c << "\n";
-    std::string m2d = CBC_decrypt(m2c, key);
+    std::string m2d = CBC_decrypt(m2c, key1, key2);
     std::cout << "DEC2: " << m2d << "\n";
-    std::cout << "----------------------" << "\n";
+    std::cout << "--------------------------------------" << "\n";
+
+    std::cout << "MSG2: " << m3 << "\n\n";
+    std::string m3c = CBC_encrypt(m3, key1, key2);
+    std::cout << "ENC2: " << m3c << "\n";
+    m3c = m3c.substr(0,15) + "0" + m3c.substr(8,16);
+    std::cout << "ATACK:" << m3c << "\n";
+    std::string m3d = CBC_decrypt(m3c, key1, key2);
+    std::cout << "DEC2: " << m3d << "\n";
+    std::cout << "--------------------------------------" << "\n";
 
     return 0;
 }
