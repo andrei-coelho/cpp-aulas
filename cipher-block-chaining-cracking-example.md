@@ -27,7 +27,7 @@ Agora que temos o byte da chave que altera o valor do texto podemos calcular o r
     "4" -> 0x34 -> 00110100
     key -> 0x34 -> 00110100
                      XOR
-    res -> 0x45 -> 00000000
+    res -> 0x00 -> 00000000
 
 Isso conclui que o texto cifrado que irá descriptografar a mensagem para `sendme$4` é:
 
